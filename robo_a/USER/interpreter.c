@@ -92,8 +92,8 @@ command list:
 	fan_kowtow_r(int8_t dir)
 		(byte) 0x12 (int8_t) dir
 	
-	push_rod(uint8_t dir)
-		(byte) 0x13 (uint8_t) dir
+	push_rod(uint8_t dir, uint8_t channel_num)
+		(byte) 0x13 (4-bit) dir (4-bit) num
 */
 int run_cmd(void)
 {
@@ -274,7 +274,7 @@ int run_cmd(void)
 			printf("\ncmd\t0x04\n");
 			#endif
 		
-			fan_up();
+			fan_up(10);
 			break;
 		
 		case 0x06:
@@ -283,7 +283,7 @@ int run_cmd(void)
 			printf("\ncmd\t0x06\n");
 			#endif
 		
-			fan_down();
+			fan_down(10);
 			break;
 		
 		case 0x07:
@@ -376,8 +376,7 @@ int run_cmd(void)
 		
 			out_char_queue(&cmd_queue, (char*) &buf);
 		
-			push_rod(buf, 0);
-			push_rod(buf, 1);
+			push_rod((buf >> 4) & 0x0f, buf & 0x0f);
 		
 			break;
 	}

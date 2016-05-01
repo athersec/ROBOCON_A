@@ -9,7 +9,6 @@
 int32_t g_rotary_x = 0;
 int32_t g_rotary_y = 0;
 int32_t g_rotary_fan = 0;
-int32_t g_rotary_fan_updown = 0;
 int32_t g_rotary_magnet = 0;
 int32_t g_rotary_tim8 = 0;
 
@@ -78,11 +77,11 @@ float get_pos_y(void)
 }
 
 /*
-	100 degree
+	meter
 */
 float get_pos_fan(void)
 {
-	return (float)((double)g_rotary_fan / 2000 * PI * VECT_EFAN);
+	return (float)((double)g_rotary_fan / 2000 * F_DIAMETER * PI * VECT_EFAN);
 }
 
 /*

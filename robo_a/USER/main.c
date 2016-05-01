@@ -2,16 +2,19 @@
 
 #include "stm32f4xx.h"
 
+#include "automove.h"
 #include "auto_control.h"
 #include "brake.h"
 #include "clock.h"
 #include "database.h"
+#include "dma.h"
 #include "encoder.h"
 #include "fan.h"
 #include "flash.h"
 #include "interpreter.h"
 #include "magnet.h"
 #include "movement.h"
+#include "mti.h"
 #include "multi_processing.h"
 #include "pwm.h"
 #include "switch.h"
@@ -22,15 +25,21 @@
 #include "spi.h"
 #include "suart.h"
 #include "watchdog.h"
+#include "cmd.h"
+
+
 
 int main(void)
 {
 	system_clk_set();
 	systick_config();
-	db_init();
 
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	interpreter_config();
 	uart_config(115200);
+	cmd_init();
+	//uprintf(UART5,"test haha:%f\r\n",my_param->haha);
+	dma_config();
 	spi_config();
 	suart_config();
 
@@ -41,12 +50,11 @@ int main(void)
 	pwm_config();
 	// watchdog_config();
 
-
 	auto_control();
 
+	
 	printf("\n\nEntering main loop\n\n");
-	while(1)
-	{
+	while(1) {
 		check_cmd();
 	}
 

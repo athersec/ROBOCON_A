@@ -10,6 +10,11 @@
 #include "utils.h"
 
 uint8_t fan_status = 0;
+uint8_t fan_up_flag = 0;
+float fan_height = 0;
+float fan_up_length = 0;
+pid_t fp;
+
 
 void start_fan(void)
 {
@@ -41,7 +46,7 @@ inline void toggle_fan(void)
 
 void fan_roll(float rad)
 {
-	set_duty(FAN_ROLL_CHANNEL, (float)((float)0.14 - (float)0.06 * rad / ((float)PI / 2)));
+	set_duty(FAN_ROLL_CHANNEL, (float)((float)0.12 - (float)0.06 * rad / ((float)PI / 2)));
 	
 	#ifdef DEBUG
 	printf("\nfan_roll(%f)\n", rad);
@@ -50,38 +55,39 @@ void fan_roll(float rad)
 
 void fan_roll_r(int8_t dir)
 {
-	
-	#ifdef DEBUG_FAN_ROLL_R
-	printf("fan_roll_r(%d)\n", dir);
-	#endif
-	
-	static float current_rad;
-	current_rad += dir * FAN_RROLL_DIST;
-	fan_roll(current_rad);
+	set_duty(FAN_ROLL_CHANNEL, 0.13F + dir * 0.08F);
 }
 
-void fan_up(void)
+void fan_up(float speed)
 {
 	brake_release(0);
-	set_duty(FAN_UPDOWN_CHANNEL, 0.063);
+	if(speed > 10)
+		set_duty(FAN_UPDOWN_CHANNEL, 0.065);
+	else if(speed < -10)
+		set_duty(FAN_UPDOWN_CHANNEL, 0.077);
+	else set_duty(FAN_UPDOWN_CHANNEL, 0.071f - 0.006f * speed);
 }
 
 void fan_up_r(void)
 {
-	fan_up();
+	fan_up(10);
 	delay_ms(50);
 	stop_fan_up_down();
 }
 
-void fan_down(void)
+void fan_down(float speed)
 {
 	brake_release(0);
-	set_duty(FAN_UPDOWN_CHANNEL, 0.074);
+	if(speed > 10)
+		set_duty(FAN_UPDOWN_CHANNEL, 0.065);
+	else if(speed < -10)
+		set_duty(FAN_UPDOWN_CHANNEL, 0.077);
+	else set_duty(FAN_UPDOWN_CHANNEL, 0.071f + 0.006f * speed);
 }
 
 void fan_down_r(void)
 {
-	fan_down();
+	fan_down(10);
 	delay_ms(50);
 	stop_fan_up_down();
 }
@@ -90,4 +96,21 @@ void stop_fan_up_down(void)
 {
 	set_duty(FAN_UPDOWN_CHANNEL, 0.071);
 	brake(0);
+}
+
+void fan_up_auto(float pos)
+{
+	fan_up_flag = 1;
+	fan_height = get_pos_fan();
+	fan_up_length = pos;
+	fp.kp = 20;
+	fp.ki = 0;
+	fp.kd = 0;
+	pid_config(&fp);
+	fp.set_value = fan_height + pos;
+}
+
+void fan_up_stop_auto(void)
+{
+	fan_up_flag = 0;
 }

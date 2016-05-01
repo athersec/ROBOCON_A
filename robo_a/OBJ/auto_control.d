@@ -1,9 +1,11 @@
 ..\obj\auto_control.o: auto_control.c
 ..\obj\auto_control.o: F:\keil\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\auto_control.o: auto_control.h
+..\obj\auto_control.o: automove.h
 ..\obj\auto_control.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\auto_control.o: auto_control.h
 ..\obj\auto_control.o: clock.h
 ..\obj\auto_control.o: fan.h
+..\obj\auto_control.o: pid.h
 ..\obj\auto_control.o: interpreter.h
 ..\obj\auto_control.o: utils.h
 ..\obj\auto_control.o: movement.h
@@ -46,3 +48,6 @@
 ..\obj\auto_control.o: ..\FWLIB\inc\stm32f4xx_dac.h
 ..\obj\auto_control.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\auto_control.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
+..\obj\auto_control.o: mti.h
+..\obj\auto_control.o: dma.h
+..\obj\auto_control.o: F:\keil\ARM\ARMCC\Bin\..\include\string.h
