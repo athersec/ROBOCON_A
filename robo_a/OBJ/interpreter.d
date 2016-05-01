@@ -5,6 +5,7 @@
 ..\obj\interpreter.o: debug.h
 ..\obj\interpreter.o: fan.h
 ..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\interpreter.o: pid.h
 ..\obj\interpreter.o: interpreter.h
 ..\obj\interpreter.o: utils.h
 ..\obj\interpreter.o: magnet.h

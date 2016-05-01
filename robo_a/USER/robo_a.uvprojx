@@ -409,6 +409,11 @@
           <GroupName>USER</GroupName>
           <Files>
             <File>
+              <FileName>auto_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\auto_control.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
@@ -499,11 +504,6 @@
               <FilePath>.\suart.c</FilePath>
             </File>
             <File>
-              <FileName>auto_control.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\auto_control.c</FilePath>
-            </File>
-            <File>
               <FileName>multi_processing.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\multi_processing.c</FilePath>
@@ -512,6 +512,36 @@
               <FileName>database.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\database.c</FilePath>
+            </File>
+            <File>
+              <FileName>dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>mti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\mti.c</FilePath>
+            </File>
+            <File>
+              <FileName>mpu6050.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\mpu6050.c</FilePath>
+            </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>us100.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\us100.c</FilePath>
+            </File>
+            <File>
+              <FileName>automove.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\automove.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -749,11 +779,6 @@
               <FilePath>.\clock.h</FilePath>
             </File>
             <File>
-              <FileName>config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\config.h</FilePath>
-            </File>
-            <File>
               <FileName>debug.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\debug.h</FilePath>
@@ -867,6 +892,11 @@
               <FileName>database.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\database.h</FilePath>
+            </File>
+            <File>
+              <FileName>whiteline.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\whiteline.h</FilePath>
             </File>
           </Files>
         </Group>

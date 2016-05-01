@@ -48,5 +48,3 @@
 ..\obj\automove.o: dma.h
 ..\obj\automove.o: F:\keil\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\automove.o: pid.h
-..\obj\automove.o: parameter.h
-..\obj\automove.o: link_list.h

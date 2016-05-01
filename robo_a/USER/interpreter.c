@@ -92,8 +92,11 @@ command list:
 	fan_kowtow_r(int8_t dir)
 		(byte) 0x12 (int8_t) dir
 	
-	push_rod(uint8_t dir)
-		(byte) 0x13 (uint8_t) dir
+	push_rod(uint8_t dir, uint8_t channel_num)
+		(byte) 0x13 (4-bit) dir (4-bit) num
+	
+	f_run_c(int8_t spd_x, int8_t spd_y, int8_t spd_c) + f_send_speed(void)
+		£¨byte) 0x30 (int8_t) [spd_x] (int8_t) [spd_y] (int8_t) [spd_c]
 */
 int run_cmd(void)
 {
@@ -102,7 +105,7 @@ int run_cmd(void)
 
 	uint8_t i;
 
-	uint8_t buf = 0, buf1 = 0;
+	uint8_t buf = 0, buf1 = 0, buf2 = 0;
 	uint16_t dbuf = 0;
 	uint32_t qbuf = 0;
 
@@ -116,6 +119,14 @@ int run_cmd(void)
 			printf("\nUnknown command:%x\n", cmd);
 			#endif
 
+			break;
+		
+		case 0x30:
+			out_char_queue(&cmd_queue, (char*) &buf);
+			out_char_queue(&cmd_queue, (char*) &buf1);
+			out_char_queue(&cmd_queue, (char*) &buf2);
+			f_run_c(buf, buf1, buf2);
+			f_send_speed();
 			break;
 		
 		case 0x14:
@@ -274,7 +285,7 @@ int run_cmd(void)
 			printf("\ncmd\t0x04\n");
 			#endif
 		
-			fan_up();
+			fan_up(10);
 			break;
 		
 		case 0x06:
@@ -283,13 +294,13 @@ int run_cmd(void)
 			printf("\ncmd\t0x06\n");
 			#endif
 		
-			fan_down();
+			fan_down(10);
 			break;
 		
 		case 0x07:
 			
 			#ifdef DEBUG_INTPRT
-			printf("\ncmd\t0x06\n");
+			printf("\ncmd\t0x07\n");
 			#endif
 		
 			fan_up_r();
@@ -298,7 +309,7 @@ int run_cmd(void)
 		case 0x08:
 			
 			#ifdef DEBUG_INTPRT
-			printf("\ncmd\t0x06\n");
+			printf("\ncmd\t0x08\n");
 			#endif
 		
 			fan_down_r();
@@ -307,7 +318,7 @@ int run_cmd(void)
 		case 0x0a:
 			
 			#ifdef DEBUG_INTPRT
-			printf("\ncmd\t0x06\n");
+			printf("\ncmd\t0x0a\n");
 			#endif
 		
 			toggle_fan();
@@ -376,8 +387,7 @@ int run_cmd(void)
 		
 			out_char_queue(&cmd_queue, (char*) &buf);
 		
-			push_rod(buf, 0);
-			push_rod(buf, 1);
+			push_rod((buf >> 4) & 0x0f, buf & 0x0f);
 		
 			break;
 	}

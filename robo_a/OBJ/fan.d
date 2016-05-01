@@ -6,6 +6,7 @@
 ..\obj\fan.o: debug.h
 ..\obj\fan.o: encoder.h
 ..\obj\fan.o: fan.h
+..\obj\fan.o: pid.h
 ..\obj\fan.o: movement.h
 ..\obj\fan.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\fan.o: usart.h
