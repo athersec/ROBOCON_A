@@ -35,3 +35,6 @@
 ..\obj\dma.o: ..\FWLIB\inc\stm32f4xx_dac.h
 ..\obj\dma.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\dma.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
+..\obj\dma.o: mti.h
+..\obj\dma.o: dma.h
+..\obj\dma.o: F:\keil\ARM\ARMCC\Bin\..\include\string.h

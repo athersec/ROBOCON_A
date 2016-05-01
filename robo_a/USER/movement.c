@@ -3,6 +3,7 @@
 #include "encoder.h"
 #include "fan.h"
 #include "movement.h"
+#include "mti.h"
 
 
 int16_t get_speed(uint8_t wheel)
@@ -16,6 +17,18 @@ void stop_all(void)
 	delay_ms(10);
 }
 
+void rotate(float rad)
+{
+	rotate_r(rad - get_mti_value());
+}
+
+void rotate_r(float rad)
+{
+	#ifdef USE_FOUR_WHEEL
+	f_rotate_r(rad);
+	#endif
+}
+
 void rotate_c(int8_t arg_spd)
 {
 	#ifdef DEBUG
@@ -27,7 +40,7 @@ void rotate_c(int8_t arg_spd)
 	#endif
 	
 	#ifdef USE_FOUR_WHEEL
-	f_rotate_c(arg_spd);
+	f_rotate_r_c(arg_spd);
 	#endif
 }
 
@@ -50,6 +63,18 @@ void move_xy_c(int8_t spd_x, int8_t spd_y)
 	
 	#ifdef USE_FOUR_WHEEL
 	f_move_xy_c(spd_x, spd_y);
+	#endif
+}
+
+
+void move_xy(float x, float y)
+{
+	#ifdef DEBUG
+	printf("\nmove_xy(%f, %f)\n", x, y);
+	#endif
+
+	#ifdef USE_FOUR_WHEEL
+	f_move_xy(x, y);
 	#endif
 }
 
@@ -94,6 +119,11 @@ void stop(void)
 	#ifdef USE_THREE_WHEEL
 	t_stop();
 	#endif
+
+	#ifdef USE_FOUR_WHEEL
+	f_stop();
+	#endif
+
 	delay_ms(10);
 }
 

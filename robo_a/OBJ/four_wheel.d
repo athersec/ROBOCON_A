@@ -1,5 +1,6 @@
 ..\obj\four_wheel.o: four_wheel.c
 ..\obj\four_wheel.o: F:\keil\ARM\ARMCC\Bin\..\include\math.h
+..\obj\four_wheel.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\four_wheel.o: clock.h
 ..\obj\four_wheel.o: F:\keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\four_wheel.o: database.h
@@ -7,7 +8,6 @@
 ..\obj\four_wheel.o: debug.h
 ..\obj\four_wheel.o: encoder.h
 ..\obj\four_wheel.o: movement.h
-..\obj\four_wheel.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\four_wheel.o: usart.h
 ..\obj\four_wheel.o: F:\keil\ARM\ARMCC\Bin\..\include\stdarg.h
 ..\obj\four_wheel.o: F:\keil\ARM\ARMCC\Bin\..\include\stdio.h
@@ -46,4 +46,8 @@
 ..\obj\four_wheel.o: ..\FWLIB\inc\stm32f4xx_dac.h
 ..\obj\four_wheel.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\four_wheel.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
+..\obj\four_wheel.o: mti.h
+..\obj\four_wheel.o: dma.h
+..\obj\four_wheel.o: F:\keil\ARM\ARMCC\Bin\..\include\string.h
+..\obj\four_wheel.o: pid.h
 ..\obj\four_wheel.o: utils.h
