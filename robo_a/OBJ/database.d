@@ -1,0 +1,10 @@
+..\obj\database.o: database.c
+..\obj\database.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\database.o: F:\keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\database.o: F:\keil\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\database.o: F:\keil\ARM\ARMCC\Bin\..\include\string.h
+..\obj\database.o: database.h
+..\obj\database.o: F:\keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\database.o: utils.h
+..\obj\database.o: debug.h
+..\obj\database.o: flash.h
