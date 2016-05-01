@@ -155,17 +155,17 @@ void db_delete(const char* const name)
 	db_index -= len;
 }
 
-void db_read(const char* const name, uint8_t* data)
+bool db_read(const char* const name, uint8_t* data)
 {
 	if(false == db_init_done)
-		return;
+		return false;
 
 	uint32_t i, j, data_len;
 	
 	i = db_find(name);
 	if(i == 0) {
 		data[0] = 0;
-		return;
+		return false;
 	}
 
 	data_len = get_len_by_pos(i);
@@ -174,6 +174,8 @@ void db_read(const char* const name, uint8_t* data)
 		data[j] = db_buf[i + j];
 	}
 	data[j] = 0;
+	
+	return true;
 }
 
 
@@ -243,8 +245,11 @@ void db_exec(char cmd[])
 					break;
 				}
 			}
-			db_read((char*)name, data);
-			printf("\n%s=%s\n", name, data);
+			if(true == db_read((char*)name, data)) {
+				printf("\n%s=%s\n", name, data);
+			} else {
+				printf("\nKey not found.\n");
+			}
 			break;
 		case 'd':
 			for(i = 1; i < NAME_MAX_LEN; i++) {
@@ -260,6 +265,10 @@ void db_exec(char cmd[])
 		case 's':
 			db_sync();
 			printf("\nsync done\n");
+			break;
+		case 'c':
+			db_clear_init();
+			printf("\nDB CLEARED!!\n");
 			break;
 		default:
 			#ifdef DEBUG_DB_EXEC

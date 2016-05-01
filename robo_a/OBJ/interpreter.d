@@ -1,15 +1,16 @@
 ..\obj\interpreter.o: interpreter.c
+..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\math.h
 ..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\interpreter.o: debug.h
 ..\obj\interpreter.o: fan.h
 ..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\interpreter.o: pid.h
 ..\obj\interpreter.o: interpreter.h
 ..\obj\interpreter.o: utils.h
 ..\obj\interpreter.o: magnet.h
 ..\obj\interpreter.o: movement.h
-..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\math.h
 ..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\interpreter.o: usart.h
 ..\obj\interpreter.o: F:\keil\ARM\ARMCC\Bin\..\include\stdarg.h
@@ -49,3 +50,4 @@
 ..\obj\interpreter.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\interpreter.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\interpreter.o: push_rod.h
+..\obj\interpreter.o: whiteline.h

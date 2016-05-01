@@ -4,6 +4,7 @@
 ..\obj\movement.o: debug.h
 ..\obj\movement.o: encoder.h
 ..\obj\movement.o: fan.h
+..\obj\movement.o: pid.h
 ..\obj\movement.o: movement.h
 ..\obj\movement.o: F:\keil\ARM\ARMCC\Bin\..\include\math.h
 ..\obj\movement.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
@@ -45,3 +46,6 @@
 ..\obj\movement.o: ..\FWLIB\inc\stm32f4xx_dac.h
 ..\obj\movement.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\movement.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
+..\obj\movement.o: mti.h
+..\obj\movement.o: dma.h
+..\obj\movement.o: F:\keil\ARM\ARMCC\Bin\..\include\string.h

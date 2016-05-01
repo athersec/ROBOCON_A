@@ -35,14 +35,17 @@
 ..\obj\main.o: ..\FWLIB\inc\stm32f4xx_dac.h
 ..\obj\main.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\main.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
-..\obj\main.o: auto_control.h
+..\obj\main.o: automove.h
 ..\obj\main.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\main.o: auto_control.h
 ..\obj\main.o: brake.h
 ..\obj\main.o: clock.h
 ..\obj\main.o: database.h
 ..\obj\main.o: utils.h
+..\obj\main.o: dma.h
 ..\obj\main.o: encoder.h
 ..\obj\main.o: fan.h
+..\obj\main.o: pid.h
 ..\obj\main.o: flash.h
 ..\obj\main.o: interpreter.h
 ..\obj\main.o: utils.h
@@ -51,6 +54,9 @@
 ..\obj\main.o: F:\keil\ARM\ARMCC\Bin\..\include\math.h
 ..\obj\main.o: usart.h
 ..\obj\main.o: F:\keil\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\main.o: mti.h
+..\obj\main.o: dma.h
+..\obj\main.o: F:\keil\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\main.o: multi_processing.h
 ..\obj\main.o: pwm.h
 ..\obj\main.o: switch.h
@@ -61,3 +67,4 @@
 ..\obj\main.o: spi.h
 ..\obj\main.o: suart.h
 ..\obj\main.o: watchdog.h
+..\obj\main.o: whiteline.h

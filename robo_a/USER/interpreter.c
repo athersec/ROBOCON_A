@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +9,7 @@
 #include "magnet.h"
 #include "movement.h"
 #include "push_rod.h"
-#include "math.h"
+#include "whiteline.h"
 
 
 char cmd_buf[CMD_BUF_LEN] = {0};
@@ -87,13 +88,16 @@ command list:
 		(byte) 0x43 (float) [rad]
 	
 	fan_roll_r(int8_t dir)
-		(byte) 0x11 (int8_t) dir
+		(byte) 0x11 (int8_t) [dir]
 	
 	fan_kowtow_r(int8_t dir)
-		(byte) 0x12 (int8_t) dir
+		(byte) 0x12 (int8_t) [dir]
 	
-	push_rod(uint8_t dir)
-		(byte) 0x13 (uint8_t) dir
+	push_rod(uint8_t dir, uint8_t channel_num)
+		(byte) 0x13 (4-bit) [dir] (4-bit) [num]
+	
+	set_wl_value(float x, float y)
+		(byte) 0x80	(4-byte) [x] (4-byte) [y]
 */
 int run_cmd(void)
 {
@@ -106,6 +110,7 @@ int run_cmd(void)
 	uint16_t dbuf = 0;
 	uint32_t qbuf = 0;
 
+	float flbuf, flbuf1;
 	float x, y, rad;
 
 
@@ -118,6 +123,30 @@ int run_cmd(void)
 
 			break;
 		
+		case 0x80:
+
+			qbuf = 0;
+			for(i = 0; i < 4; i++) {
+				out_char_queue(&cmd_queue, (char*) &buf);
+				qbuf |= buf << i * 8;
+			}
+			memcpy(&flbuf, &qbuf, 4);
+
+			qbuf = 0;
+			for(i = 0; i < 4; i++) {
+				out_char_queue(&cmd_queue, (char*) &buf);
+				qbuf |= buf << i * 8;
+			}
+			memcpy(&flbuf1, &qbuf, 4);
+
+			set_wl_value(flbuf, flbuf1);
+
+			#ifdef DEBUG_INTPRT
+			#include "clock.h"
+			printf("set_wl_value\n");
+			#endif
+			break;
+
 		case 0x14:
 			
 			#ifdef DEBUG_INTPRT
@@ -274,7 +303,7 @@ int run_cmd(void)
 			printf("\ncmd\t0x04\n");
 			#endif
 		
-			fan_up();
+			fan_up(10);
 			break;
 		
 		case 0x06:
@@ -283,7 +312,7 @@ int run_cmd(void)
 			printf("\ncmd\t0x06\n");
 			#endif
 		
-			fan_down();
+			fan_down(10);
 			break;
 		
 		case 0x07:
@@ -376,8 +405,7 @@ int run_cmd(void)
 		
 			out_char_queue(&cmd_queue, (char*) &buf);
 		
-			push_rod(buf, 0);
-			push_rod(buf, 1);
+			push_rod((buf >> 4) & 0x0f, buf & 0x0f);
 		
 			break;
 	}
@@ -396,11 +424,20 @@ int check_cmd(void)
 		fr = (cmd_queue.front + 1) % cmd_queue.max_size;
 		cmd = cmd_queue.data[fr];
 		data_len = (cmd >> 4);
-		cmd &= 0x0f;
 		
 		#ifdef DEBUG_INTPRT
 		printf("\ndata-len:%x\ncmd:0x%x\n", data_len, cmd);
 		#endif
+		
+		if(0x00 == cmd) {
+			#ifdef DEBUG_INTPRT
+			printf("\n1\n");
+			#endif
+			
+			out_char_queue(&cmd_queue, (char*) &check_sum);  // remove the check_sum byte
+			
+			return 1;
+		}
 		
 		if(cmd_queue.count >= data_len + 2) {
 			for(i = 0; i <= data_len; i++) {
@@ -421,19 +458,37 @@ int check_cmd(void)
 		
 				return 0;
 			} else {
-				
 				#ifdef DEBUG_INTPRT
-				printf("\n-3\n");
+				printf("\ndata:%x\tcheck_sum:%x\n", cmd_queue.data[(fr + i) % cmd_queue.max_size], check_sum);
 				#endif
 				
 				out_char_queue(&cmd_queue, (char*) &check_sum);  //remove the wrong byte
+				
+				#ifdef DEBUG_INTPRT
+				printf("\ndata:%x\tcheck_sum:%x\n", cmd_queue.data[(fr + i) % cmd_queue.max_size], check_sum);
+				printf("-3,\trm %x,\t", check_sum);
+				
+				fr = (cmd_queue.front + 1) % cmd_queue.max_size;
+				
+				for(i = 0; i <= data_len + 2; i++) {
+					printf("%x\t", cmd_queue.data[(fr + i) % cmd_queue.max_size]);
+				}
+				printf("\n");
+				#endif
 				
 				return -3;
 			}
 		} else {
 			
 			#ifdef DEBUG_INTPRT
-			printf("\n-2\n");
+			printf("\n-2,\t");
+			
+			fr = (cmd_queue.front + 1) % cmd_queue.max_size;
+			
+			for(i = 0; i <= data_len + 2; i++) {
+				printf("%x\t", cmd_queue.data[(fr + i) % cmd_queue.max_size]);
+			}
+			printf("\n");
 			#endif
 			
 			return -2;

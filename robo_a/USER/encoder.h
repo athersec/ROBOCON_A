@@ -3,11 +3,16 @@
 
 #define ENCODER_CHANNEL_NUM 5
 
-#define VECT_EX (+1)  // encoder of x
-#define VECT_EY (-1)  // encoder of y
+#define VECT_EX (-1)  // encoder of x
+#define VECT_EY (+1)  // encoder of y
 #define VECT_EFAN (-1)  // encoder for the fan
 #define VECT_EMAGNET (+1)	// encoder for the up and down movements of the magnet at tim1
 #define VECT_ETIM8 (+1)	// encoder for the tim8
+
+#define EX_X 0.21f
+#define EX_Y 0.065f
+#define EY_X 0.21f
+#define EY_Y -0.065f
 
 
 extern int32_t g_rotary_x;

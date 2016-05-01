@@ -1,13 +1,15 @@
 ..\obj\fan.o: fan.c
 ..\obj\fan.o: F:\keil\ARM\ARMCC\Bin\..\include\math.h
+..\obj\fan.o: auto_control.h
+..\obj\fan.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\fan.o: brake.h
 ..\obj\fan.o: F:\keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\fan.o: clock.h
 ..\obj\fan.o: debug.h
 ..\obj\fan.o: encoder.h
 ..\obj\fan.o: fan.h
+..\obj\fan.o: pid.h
 ..\obj\fan.o: movement.h
-..\obj\fan.o: F:\keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\fan.o: usart.h
 ..\obj\fan.o: F:\keil\ARM\ARMCC\Bin\..\include\stdarg.h
 ..\obj\fan.o: F:\keil\ARM\ARMCC\Bin\..\include\stdio.h

@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#define SU_CHANNEL_NUM 1
+#define SU_CHANNEL_NUM 2
 
 void suart_config(void);
 char sugetchar(uint8_t channel);

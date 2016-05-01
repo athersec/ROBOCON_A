@@ -2,7 +2,7 @@
 
 #include "utils.h"
 
-#define CMD_BUF_LEN 64
+#define CMD_BUF_LEN 1024
 
 extern char_queue cmd_queue;
 

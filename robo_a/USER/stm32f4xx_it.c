@@ -34,6 +34,7 @@
 
 #include "clock.h"
 #include "debug.h"
+#include "movement.h"
 #include "multi_processing.h"
 #include "pwm.h"
 #include "usart.h"
@@ -172,23 +173,26 @@ void USART1_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
-		USART_SendData(USART3, USART_ReceiveData(USART1));
-	}
-}
-
-void USART2_IRQHandler(void)
-{
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
-	{
-		USART_SendData(USART3, USART_ReceiveData(USART2));
+		USART_SendData(UART5, USART_ReceiveData(USART1));
 	}
 }
 
 #include "interpreter.h"
+void USART2_IRQHandler(void)
+{
+	char data;
+
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
+	{
+		data = USART_ReceiveData(USART2);
+		
+		// in_char_queue(&cmd_queue, data);
+	}
+}
+
 void USART3_IRQHandler(void)
 {
 	char data;
-	char tmp;
 
 	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)
 	{
@@ -196,6 +200,65 @@ void USART3_IRQHandler(void)
 		
 		in_char_queue(&cmd_queue, data);
 		
+		// USART_SendData(UART5, data);
+	}
+}
+
+#include "mti.h"
+void UART4_IRQHandler(void)
+{
+	static bool mti_init_flag = false;
+	static uint8_t mti_count = 0;
+
+	if(USART_GetITStatus(UART4, USART_IT_RXNE) != RESET) {
+		if(mti_count >= MTI_BUF_SIZE) {
+			mti_count = 0;
+
+			mti_angle_new = mti();
+			
+			mti_angle += mti_angle_new - mti_angle_old;;
+			
+			if(mti_angle_new < -PI / 2 && mti_angle_old > PI / 2) {
+				mti_angle += 2 * PI;
+			} else if(mti_angle_new > PI / 2 && mti_angle_old < - PI / 2) {
+				mti_angle += -2 * PI;
+			}
+			
+			mti_angle_old = mti_angle_new;
+			
+			if(!mti_init_flag) {
+				mti_angle = 0;
+				mti_init_flag = true;
+			}
+			
+			mti_value_flag = 1;
+			//uprintf(UART5,"angle%f\r\n",mti_angle);//²âÊÔÓÃ
+		}
+		
+		mti_buffer[mti_count] = USART_ReceiveData(UART4);
+		
+		if(mti_count < 4) {
+			if(mti_buffer[mti_count] == mti_flag[mti_count]) {
+				mti_count++;
+			} else {
+				mti_count = 0;
+			}
+		} else {
+			mti_count++;
+		}
+	}
+}
+
+void UART5_IRQHandler(void)
+{
+	char data;
+	char tmp;
+
+	if(USART_GetITStatus(UART5, USART_IT_RXNE) != RESET)
+	{
+		data = USART_ReceiveData(UART5);
+		USART_SendData(UART5, data);
+
 		#ifdef DEBUG_DB_EXEC
 		#include "database.h"
 		
@@ -218,30 +281,51 @@ void USART3_IRQHandler(void)
 					in_char_queue(&db_cmd_queue, data);
 				break;
 		}
-		USART_SendData(USART3, data);
 		#endif
 	}
 }
 
-void UART4_IRQHandler(void)
-{
-	if(USART_GetITStatus(UART4, USART_IT_RXNE) != RESET)
-	{
-		USART_SendData(UART4, USART_ReceiveData(UART4));
-	}
-}
-
-
+#include "automove.h"
 void TIM1_UP_TIM10_IRQHandler(void)
 {
+	static uint8_t t;
 	if(TIM_GetITStatus(TIM10, TIM_IT_Update) != RESET) {
+		t++;
+		if(t > 100) {
+			automove_daemon();
+			t = 0;
+		}
+
+		check_cmd();
 		TIM_ClearITPendingBit(TIM10, TIM_IT_Update);
 	}
 }
 
+
+/*
+Used for the control of the wheels
+*/
+#include "fan.h"
+#include "encoder.h"
 void TIM8_TRG_COM_TIM14_IRQHandler(void)
 {
+	static uint16_t count0 = 0;
+	const uint16_t count_num = 500;
 	if(TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) {
+		TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
+		if(count0 <= count_num / 2) {
+			if(0 == count0 % count_num / 10) {
+				if(1 == fan_up_flag) {
+					if(((get_pos_fan() - fan_height) > (fan_up_length + FAN_THOLD)) || ((get_pos_fan() - fan_height) < (fan_up_length - FAN_THOLD)))
+						((get_pos_fan() - fan_height) < fan_up_length) ? fan_up(10) : fan_down(10);
+					else stop_fan_up_down();
+				}
+			}
+		}
+		if(count0 > count_num / 2)
+			stop_fan_up_down();
+		count0++;
+		count0 %= count_num;
 		TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
 	}
 }
@@ -270,7 +354,6 @@ void TIM6_DAC_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
 	}
 }
-
 #endif
 
 
@@ -280,6 +363,49 @@ void TIM1_TRG_COM_TIM11_IRQHandler(void)
 	if(TIM_GetITStatus(TIM11, TIM_IT_Update) != RESET) {
 		suart_check();
 		TIM_ClearITPendingBit(TIM11, TIM_IT_Update);
+	}
+}
+
+
+#include "mti.h"
+void DMA1_Stream2_IRQHandler(void)
+{
+	static bool mti_init_flag = false;
+
+	if(SET == DMA_GetITStatus(DMA1_Stream2, DMA_IT_TCIF2) ) {
+		DMA_Cmd(DMA1_Stream2, DISABLE);
+		
+		mti_angle_new = mti();
+		
+		mti_angle += mti_angle_new - mti_angle_old;;
+		
+		if(mti_angle_new < -PI / 2 && mti_angle_old > PI / 2) {
+			mti_angle += 2 * PI;
+		} else if(mti_angle_new > PI / 2 && mti_angle_old < - PI / 2) {
+			mti_angle += -2 * PI;
+		}
+		
+		mti_angle_old = mti_angle_new;
+		
+		if(!mti_init_flag) {
+			mti_angle = 0;
+			mti_init_flag = true;
+		}
+		
+		mti_value_flag = 1;
+		//uprintf(UART5,"angle%f\r\n",mti_angle);//²âÊÔÓÃ
+		DMA_ClearITPendingBit(DMA1_Stream2, DMA_IT_TCIF2);
+		DMA_Cmd(DMA1_Stream2, ENABLE);
+		mti_value_flag = 0;
+	}
+}
+
+void DMA1_Stream4_IRQHandler(void)
+{
+	if(SET == DMA_GetITStatus(DMA1_Stream4, DMA_IT_TCIF4)) {
+		uprintf(UART5,"SendOK\r\n");
+		DMA_Cmd(DMA1_Stream4, DISABLE);
+		DMA_ClearITPendingBit(DMA1_Stream4, DMA_IT_TCIF4);
 	}
 }
 
@@ -329,24 +455,23 @@ void TIM8_UP_TIM13_IRQHandler(void)
 }
 
 /*
-	exti8 exti11
-	switch 0\1
-	fan_down_stop\fan_up_stop
+	exti8 exti11 exti3
+	switch 0\1\2
+	fan_down_stop\fan_up_stop\light_electricity
 */
+#include "switch.h"
 void EXTI9_5_IRQHandler(void)
 {
-	static uint8_t i = 0;
 	delay_ms(10);
 	if(SET == EXTI_GetITStatus(EXTI_Line8)){
 		if(0 == GPIO_ReadInputDataBit(GPIOE, GPIO_Pin_8)) {
-			i++;
-			if(2 == i) stop_fan_up_down();
+			if(get_pos_fan() > get_pos_fan()) stop_fan_up_down();
 			#ifdef DEBUG
 			printf("\nstop_fan_up_down()\n");
 			#endif
 		}
+		EXTI_ClearITPendingBit(EXTI_Line8);
 	}
-	EXTI_ClearITPendingBit(EXTI_Line8);
 }
 
 void EXTI15_10_IRQHandler(void)
@@ -355,6 +480,7 @@ void EXTI15_10_IRQHandler(void)
 	if(SET == EXTI_GetITStatus(EXTI_Line11)){
 		if(0 == GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_11)) {
 			stop_fan_up_down();
+			fan_up_stop_auto();
 			#ifdef DEBUG
 			printf("\nstop_fan_up_down()\n");
 			#endif
@@ -362,53 +488,14 @@ void EXTI15_10_IRQHandler(void)
 		EXTI_ClearITPendingBit(EXTI_Line11);
 	}
 }
-
-#include "magnet.h"
-#include "switch.h"
-void EXTI2_IRQHandler(void)
+#include "movement.h"
+void EXTI3_IRQHandler(void)
 {
-	delay_ms(10);
-	if(0 == GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)) {
-		
-		#ifdef DEBUG
-		printf("\nmag_up_stop()\n");
-		#endif
-		
-		mag_in();
-		
-		#ifdef DEBUG
-		printf("\nmag_in()\n");
-		#endif
+	if(0 == GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_3)) {
+		/*stop car*/
+		stop_all();
 	}
-	EXTI_ClearITPendingBit(EXTI_Line2);
-}
-
-void EXTI0_IRQHandler(void)
-{
-	delay_ms(10);
-	
-	if(1 == GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_0)) {
-		g_switch_flag = 1;
-	}
-	
-	if(0 == GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_0)) {
-		g_switch_flag = 0;
-	}
-	
-	EXTI_ClearITPendingBit(EXTI_Line0);
-}
-
-void EXTI1_IRQHandler(void)
-{
-	delay_ms(10);
-	
-	if(1 == GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_1)) {
-		g_switch_flag = 1;
-	}
-	if(0 == GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_1)) {
-		g_switch_flag = 0;
-	}
-	EXTI_ClearITPendingBit(EXTI_Line1);
+	EXTI_ClearITPendingBit(EXTI_Line3);
 }
 
 /******************************************************************************/

@@ -14,22 +14,23 @@
 typedef unsigned char byte;
 typedef unsigned int word;
 
-uint16_t su_tx_pins[SU_CHANNEL_NUM] = {GPIO_Pin_10};
-GPIO_TypeDef *su_tx_ports[SU_CHANNEL_NUM] = {GPIOB};
+uint16_t su_tx_pins[SU_CHANNEL_NUM] = {GPIO_Pin_0, GPIO_Pin_13};
+GPIO_TypeDef *su_tx_ports[SU_CHANNEL_NUM] = {GPIOB, GPIOF};
 
-uint16_t su_rx_pins[SU_CHANNEL_NUM] = {GPIO_Pin_11};
-GPIO_TypeDef *su_rx_ports[SU_CHANNEL_NUM] = {GPIOB};
+uint16_t su_rx_pins[SU_CHANNEL_NUM] = {GPIO_Pin_1, GPIO_Pin_15};
+GPIO_TypeDef *su_rx_ports[SU_CHANNEL_NUM] = {GPIOB, GPIOF};
 
 byte TBUF[SU_CHANNEL_NUM] = {0}, RBUF[SU_CHANNEL_NUM] = {0};
 byte TDAT[SU_CHANNEL_NUM] = {0}, RDAT[SU_CHANNEL_NUM] = {0};
 byte TCNT[SU_CHANNEL_NUM] = {0}, RCNT[SU_CHANNEL_NUM] = {0};
 byte TBIT[SU_CHANNEL_NUM] = {0}, RBIT[SU_CHANNEL_NUM] = {0};
 bool TING[SU_CHANNEL_NUM] = {0}, RING[SU_CHANNEL_NUM] = {0};
-bool TEND[SU_CHANNEL_NUM] = {1}, REND[SU_CHANNEL_NUM] = {1};
+bool TEND[SU_CHANNEL_NUM] = {1, 1}, REND[SU_CHANNEL_NUM] = {1, 1};
 
 void suart_config(void)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOF, ENABLE);
 
 
 	GPIO_InitTypeDef GPIO_InitStructure;
